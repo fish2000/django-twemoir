@@ -12,7 +12,7 @@ from django.contrib import admin
 from docfield.modelfields import JSONField
 from adminfields.widgets import JsonPairInputs
 import tagging.models as tags
-import ost2.twemoir.models as tm
+import twemoir.models as tm
 
 class TMTweetHashtagFilter(admin.SimpleListFilter):
     title = u"Hashtag"
