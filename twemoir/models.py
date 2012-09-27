@@ -10,13 +10,13 @@ from django.contrib.auth.models import User
 from tagging.fields import TagField
 from tagging.models import Tag as Tagg
 
+from twemoir.conf import settings
 from twemoir.managers import TaggedManager, TaggedQuerySet
 from twemoir.modelfields import CharSignatureField
 
 # for TMStagedTweet and TMStagedDraft
-from twemoir.lib.states2.models import (StateMachine,
-                                    StateDefinition, StateTransition,
-                                    StateModel)
+from twemoir.lib.states2.models import (StateMachine, StateDefinition,
+                                        StateTransition, StateModel)
 
 request_token_url = 'https://api.twitter.com/oauth/request_token'
 access_token_url = 'https://api.twitter.com/oauth/access_token'
@@ -56,25 +56,25 @@ class TMTweetManager(TaggedManager):
         """ Sync all tweets by the Twitter author as local TMTweets. """
         from twemoir.utils import TMUserTweets
         if not user_id_or_username:
-            user_id_or_username = AUTHOR_USER_NAME()
+            user_id_or_username = settings.TWEMOIR_AUTHOR_USER_NAME
         tweets = TMUserTweets(user_id_or_username, verbose=True,
-            **AUTHOR_CREDENTIALS())
+            **settings.TWEMOIR_AUTHOR_CREDENTIALS)
         self.load_tweets(tweets)
     
     def sync_latest(self, user_id_or_username=None):
         """ Sync tweets by the Twitter author locally as TMTweets. """
         from twemoir.utils import TMUserTweets
         if not user_id_or_username:
-            user_id_or_username = AUTHOR_USER_NAME()
+            user_id_or_username = settings.TWEMOIR_AUTHOR_USER_NAME
         tweets = TMUserTweets(user_id_or_username, verbose=True, since_id=self.since_id(),
-            **AUTHOR_CREDENTIALS())
+            **settings.TWEMOIR_AUTHOR_CREDENTIALS)
         self.load_tweets(tweets)
     
     def load_tweet(self, status_id):
         """ Load a single tweet by its Twitter status ID,
         and save it locally as a TMTweet instance. """
         import twitter
-        #api = twitter.Api(**AUTHOR_CREDENTIALS())
+        #api = twitter.Api(**settings.TWEMOIR_AUTHOR_CREDENTIALS)
         tweet = twitter.GetStatus(status_id)
         self.load_tweets([tweet])
     
@@ -249,7 +249,7 @@ class TMStagedTweetDFARemix(StateMachine):
             
             try:
                 tweet = TMUserStatusUpdate(instance.text, verbose=True,
-                    **AUTHOR_CREDENTIALS())
+                    **settings.TWEMOIR_AUTHOR_CREDENTIALS)
                 instance.user_id = long(tweet.user.id)
                 instance.tweet_struct = tweet.AsDict()
                 instance.save()
@@ -484,7 +484,6 @@ class TMAppKeyset(TMKeyset):
     
     def _get_request_token_with_callback(self, callback, url=request_token_url, method="POST"):
         import urlparse, urllib
-        #from django.core.urlresolvers import reverse
         client = self._get_client()
         resp, content = client.request(url, method,
             body=urllib.urlencode({ 'oauth_callback': callback, }))
@@ -570,9 +569,3 @@ class TMUserKeyset(TMKeyset):
     
     owner = property(_get_owner)
 
-
-def AUTHOR_CREDENTIALS():
-    return TMUserKeyset.objects.author_credentials()
-
-def AUTHOR_USER_NAME():
-    return TMUserKeyset.objects.author_user_name()

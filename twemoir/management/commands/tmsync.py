@@ -42,11 +42,12 @@ class Command(BaseCommand):
     
     def handle(self, user=None, *args, **options):
         #from twemoir.models import AUTHOR_USER_NAME, AUTHOR_CREDENTIALS
-        from twemoir.models import AUTHOR_USER_NAME
+        #from twemoir.models import AUTHOR_USER_NAME
+        from twemoir.conf import settings
         
         if user is None:
-            print "Syncing tweets from Twitter user '%s' (from twemoir.credentials) ..." % AUTHOR_USER_NAME()
-            user = AUTHOR_USER_NAME()
+            print "Syncing tweets from Twitter user '%s' (from twemoir.credentials) ..." % settings.TWEMOIR_AUTHOR_USER_NAME
+            user = settings.TWEMOIR_AUTHOR_USER_NAME
         
         else:
             print "Syncing tweets from Twitter user '%s' (from CLI arguments) ..." % user

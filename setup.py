@@ -67,6 +67,8 @@ setup(
     install_requires=[
         'django',
         'django-delegate',
+        'django-docfield-couchdb',
+        'django-appconf',
         'django-tagging'],
     
     classifiers=classifiers+[
