@@ -2,11 +2,9 @@
 import logging
 logg = logging.getLogger(__name__)
 
-import nltk
-
 from django.core.signing import Signer
-#from django.contrib.auth.decorators import login_required
 
+import nltk
 from dajax.core import Dajax
 from dajaxice.core import dajaxice_functions
 from threading import local
