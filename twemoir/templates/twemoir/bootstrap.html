@@ -1,0 +1,174 @@
+{% load markup typogrify softhyphen_tags twemoir %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+
+        <!--                  purloined originally from                 -->
+        <!--   http://twitter.github.com/bootstrap/examples/fluid.html  -->
+
+
+
+        <meta charset="utf-8">
+        <title>Bootstrap, from Twitter</title>
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+        <link href="/staticfiles/bootstrap/css/bootstrap.css" rel="stylesheet" />
+        <link href="/staticfiles/bootstrap/css/bootstrap-example.css" rel="stylesheet" />
+        <style type="text/css">
+
+            body {
+                padding-top: 60px;
+                padding-bottom: 40px;
+            }
+            .sidebar-nav {
+                padding: 9px 0;
+            }
+
+        </style>
+        <link href="/staticfiles/bootstrap/css/bootstrap-example.responsive.css" rel="stylesheet" />
+
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+        <script type="text/javascript" src="/staticfiles/bootstrap/js/bootstrap.js"></script>
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+
+                $('.tabb .nav-tab a:first').tab('show');
+
+            });
+
+        </script>
+
+        <link rel="shortcut icon" href="images/favicon.ico">
+        <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
+    </head>
+    <body>
+
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="#">Twemoir</a>
+                    <div class="nav-collapse">
+                        <ul class="nav">
+                            <li class="active"><a href="#">Read</a></li>
+                            <li><a href="#about">Write</a></li>
+                            <li><a href="#contact">Comment</a></li>
+                        </ul>
+                        <p class="navbar-text pull-right">Logged in as <a href="#">username</a></p>
+                    </div><!--/.nav-collapse -->
+
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span3">
+
+                    <div class="well sidebar-nav">
+                        <ul class="nav nav-list">
+                            <li class="nav-header">CHAPTERS</li>
+                            <li class="active"><a href="#">Latest</a></li>
+                            <li><a href="#">1</a></li>
+                            <li><a href="#">2</a></li>
+                            <li><a href="#">3 etcetera</a></li>
+                            <li class="nav-header">EDIT</li>
+                            <li><a href="#">Twemoirize</a></li>
+                        </ul>
+                    </div><!--/.well -->
+
+                </div><!--/span-->
+
+                <div class="span9">
+
+                    <div id="tabb" class="span8 offset1">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#read" data-toggle="tab">Read</a></li>
+                            <li><a href="#write" data-toggle="tab">Write</a></li>
+                        </ul>
+                    </div>
+
+                    </div>
+
+                    <div id="write" class="span8 offset1">
+                        <div id="draftform">
+                            {% box form %}
+                        </div>
+                    </div>
+
+                    <div id="read" class="span8 offset1">
+
+                        {% autoescape off %}
+                            {% for chapter in chapters %}
+
+                                <div class="chapter">
+
+                                    {% if forloop.counter0 != 0 %}
+
+                                        {% if forloop.counter0 == 1 %}
+                                        <div class="hero-unit">
+                                            <h1>Twemoir</h1>
+
+                                            <p><a class="btn btn-primary btn-large">Destroy &raquo;</a></p>
+                                        </div>
+                                        {% endif %}
+
+                                        <h2 id="{{ chapter.title|slugify }}"> {{ forloop.counter0 }}.
+                                            {{ chapter.title|typogrify }} </h2>
+
+                                    {% endif %}
+
+                                    {% for paragraph in chapter.paragraphs %}
+
+                                        <p>
+
+                                            <span class="pilcrow">&para;</span>
+
+                                            {% filter softhyphen %}
+                                            {% for chunk in paragraph.chunks %}
+
+                                                <span class="chunk"> {{ chunk|urlize|typogrify }} </span>
+
+                                            {% endfor %}
+                                            {% endfilter %}
+
+                                        </p>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endfor %}
+                        {% endautoescape %}
+
+                    </div><!--/span-->
+
+                </div><!--/span-->
+            </div><!--/row-->
+
+            <hr>
+
+            <footer>
+                <p>&copy; Company 2012</p>
+            </footer>
+
+        </div><!--/.fluid-container-->
+
+    </body>
+</html>
