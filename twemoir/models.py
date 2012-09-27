@@ -18,9 +18,6 @@ from twemoir.modelfields import CharSignatureField
 from twemoir.lib.states2.models import (StateMachine, StateDefinition,
                                         StateTransition, StateModel)
 
-request_token_url = 'https://api.twitter.com/oauth/request_token'
-access_token_url = 'https://api.twitter.com/oauth/access_token'
-authorize_url = 'https://api.twitter.com/oauth/authorize'
 
 class TMTweetQuerySet(TaggedQuerySet):
     @delegate
@@ -62,7 +59,7 @@ class TMTweetManager(TaggedManager):
         self.load_tweets(tweets)
     
     def sync_latest(self, user_id_or_username=None):
-        """ Sync tweets by the Twitter author locally as TMTweets. """
+        """ Sync the latest tweets by the Twitter author locally as TMTweets. """
         from twemoir.utils import TMUserTweets
         if not user_id_or_username:
             user_id_or_username = settings.TWEMOIR_AUTHOR_USER_NAME
@@ -475,14 +472,16 @@ class TMAppKeyset(TMKeyset):
         return oauth.Client(
             self._get_consumer())
     
-    def _get_request_token(self, url=request_token_url, method="GET"):
+    def _get_request_token(self,
+        url=settings.TWEMOIR_TWITTER_REQUEST_TOKEN_URL, method="GET"):
         import urlparse
         client = self._get_client()
         resp, content = client.request(url, method)
         request_token = dict(urlparse.parse_qsl(content))
         return request_token
     
-    def _get_request_token_with_callback(self, callback, url=request_token_url, method="POST"):
+    def _get_request_token_with_callback(self, callback,
+        url=settings.TWEMOIR_TWITTER_REQUEST_TOKEN_URL, method="POST"):
         import urlparse, urllib
         client = self._get_client()
         resp, content = client.request(url, method,

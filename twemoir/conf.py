@@ -25,6 +25,10 @@ class TwemoirAppConf(AppConf):
     AUTHOR_CREDENTIALS = None
     AUTHOR_USER_NAME = None
     
+    TWITTER_REQUEST_TOKEN_URL = 'https://api.twitter.com/oauth/request_token'
+    TWITTER_ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
+    TWITTER_AUTHORIZE_URL = 'https://api.twitter.com/oauth/authorize'
+    
     def configure_author_credentials(self, value):
         from twemoir.models import TMUserKeyset
         return TMUserKeyset.objects.author_credentials()

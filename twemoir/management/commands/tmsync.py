@@ -41,8 +41,6 @@ class Command(BaseCommand):
     requires_model_validation = True
     
     def handle(self, user=None, *args, **options):
-        #from twemoir.models import AUTHOR_USER_NAME, AUTHOR_CREDENTIALS
-        #from twemoir.models import AUTHOR_USER_NAME
         from twemoir.conf import settings
         
         if user is None:

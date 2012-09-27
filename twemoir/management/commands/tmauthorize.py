@@ -10,7 +10,7 @@ Copyright (c) 2011 Objects In Space And Time, LLC. All rights reserved.
 from django.core.management.base import BaseCommand
 from optparse import make_option
 
-from twemoir.models import TMTweet
+from twemoir.conf import settings
 
 tmauthorize_help = '''
     Authorizes a tweeter.
@@ -43,6 +43,8 @@ class Command(BaseCommand):
         from twemoir.models import TMAppKeyset, TMUserKeyset
         import oauth2 as oauth
         import sys, os, urlparse
+        
+        verbose = int(options.get('verbosity')) > 1
 
         if not TMAppKeyset.objects.all().exists():
             out =   "No application keys in the database. "\
@@ -86,14 +88,19 @@ class Command(BaseCommand):
 
         while True:
             appkey_raw = raw_input('App Keyset ID [%s]: \t' % default_appkey_id).strip()
+            
             try:
                 appkey_id = appkey_raw and int(appkey_raw) or default_appkey_id
+            
             except ValueError, err:
                 print "*** Invalid app key: '%s'" % appkey_raw
+                if verbose:
+                    print "*** %s" % err
                 continue
 
             try:
                 app_keyset = TMAppKeyset.objects.get(id=appkey_id)
+            
             except TMAppKeyset.DoesNotExist:
                 print "*** Couldn't find app key: '%s'" % appkey_raw
                 continue
@@ -103,23 +110,21 @@ class Command(BaseCommand):
 
         CONSUMER_KEY = unicode(app_keyset.key)
         CONSUMER_SECRET = unicode(app_keyset.secret)
-        request_token_url = 'https://api.twitter.com/oauth/request_token'
-        access_token_url = 'https://api.twitter.com/oauth/access_token'
-        authorize_url = 'https://api.twitter.com/oauth/authorize'
 
         print ""
 
-        #print "CONSUMER KEY: %s" % CONSUMER_KEY
-        #print "CONSUMER SECRET: %s" % CONSUMER_SECRET
-        #print ""
+        if verbose:
+            print "CONSUMER KEY: %s" % CONSUMER_KEY
+            print "CONSUMER SECRET: %s" % CONSUMER_SECRET
+            print ""
 
         consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
         client = oauth.Client(consumer)
-        resp, content = client.request(request_token_url, "GET")
+        resp, content = client.request(settings.TWEMOIR_TWITTER_REQUEST_TOKEN_URL, "GET")
 
         request_token = dict(urlparse.parse_qsl(content))
         auth_url = "%s?oauth_token=%s" % (
-            authorize_url, request_token['oauth_token'])
+            settings.TWEMOIR_TWITTER_AUTHORIZE_URL, request_token['oauth_token'])
 
         print 'Please authorize: ' + auth_url
 
@@ -134,13 +139,16 @@ class Command(BaseCommand):
         token.set_verifier(verifier)
         client = oauth.Client(consumer, token)
 
-        resp, content = client.request(access_token_url, "POST")
+        resp, content = client.request(settings.TWEMOIR_TWITTER_ACCESS_TOKEN_URL, "POST")
         access_token = dict(urlparse.parse_qsl(content))
 
-        #print "Access Token:"
-        #print access_token.keys() # Save the output of the script which gives the access token
-        #print access_token.values()
-        #print "You may now access protected resources using the access tokens above."
+        
+        if verbose:
+            # Save the output of the script which gives the access token
+            print "Access Token:"
+            print access_token.keys()
+            print access_token.values()
+            print "You may now access protected resources using the access tokens above."
 
         new_user_keyset = TMUserKeyset.objects.create(
             user_name=access_token['screen_name'],
