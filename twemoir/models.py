@@ -14,7 +14,7 @@ from twemoir.managers import TaggedManager, TaggedQuerySet
 from twemoir.modelfields import CharSignatureField
 
 # for TMStagedTweet and TMStagedDraft
-from twemoir.states2.models import (StateMachine,
+from twemoir.lib.states2.models import (StateMachine,
                                     StateDefinition, StateTransition,
                                     StateModel)
 

@@ -10,9 +10,9 @@ Copyright (c) 2011 Objects In Space And Time, LLC. All rights reserved.
 
 from django.contrib import admin
 from docfield.modelfields import JSONField
-from adminfields.widgets import JsonPairInputs
 import tagging.models as tags
 import twemoir.models as tm
+from twemoir.lib.adminfields.widgets import JsonPairInputs
 
 class TMTweetHashtagFilter(admin.SimpleListFilter):
     title = u"Hashtag"
