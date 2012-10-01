@@ -189,28 +189,6 @@ class TMTweet(models.Model):
         return self.text
 
 
-class TMStagedDraftQuerySet(models.query.QuerySet):
-    pass
-
-class TMStagedDraftManager(models.Manager):
-    __queryset__ = TMStagedDraftQuerySet
-
-class TMStagedDraft(models.Model):
-    objects = TMStagedDraftManager()
-    
-    owner = models.ForeignKey(User,
-        related_name='drafts',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True)
-    
-    text = models.TextField(
-        verbose_name="Tweet Text",
-        db_index=True,
-        blank=False,
-        null=False)
-
-
 """ The GAL: Global API Lock. The GIL's red-headed stepchild. """
 GAL = threading.Lock()
 
@@ -387,12 +365,6 @@ class TMStagedTweet(StateModel):
         verbose_name="Tweet Text Cryptographic Signature",
         salt="SALT THE SNAIL!! HYAA!! HYAAAAAA!!!!",
         signatory='text')
-    
-    draft = models.ForeignKey(TMStagedDraft,
-        related_name='staged_tweets',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True)
     
     tweet_struct = JSONField(
         verbose_name="Tweet Structure (from Twitter's API)",
