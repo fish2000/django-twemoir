@@ -65,6 +65,7 @@ setup(
         'twemoir': 'twemoir' },
     
     install_requires=[
+        'python-twitter',
         'django',
         'django-delegate',
         'django-docfield-couchdb',
