@@ -120,11 +120,13 @@ class Command(BaseCommand):
 
         consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
         client = oauth.Client(consumer)
-        resp, content = client.request(settings.TWEMOIR_TWITTER_REQUEST_TOKEN_URL, "GET")
+        resp, content = client.request(
+            settings.TWEMOIR_TWITTER_REQUEST_TOKEN_URL, "GET")
 
         request_token = dict(urlparse.parse_qsl(content))
         auth_url = "%s?oauth_token=%s" % (
-            settings.TWEMOIR_TWITTER_AUTHORIZE_URL, request_token['oauth_token'])
+            settings.TWEMOIR_TWITTER_AUTHORIZE_URL,
+            request_token['oauth_token'])
 
         print 'Please authorize: ' + auth_url
 
@@ -134,12 +136,14 @@ class Command(BaseCommand):
         verifier = raw_input('PIN: \t').strip()
 
         token = oauth.Token(
-            request_token['oauth_token'], request_token['oauth_token_secret'])
+            request_token['oauth_token'],
+            request_token['oauth_token_secret'])
 
         token.set_verifier(verifier)
         client = oauth.Client(consumer, token)
 
-        resp, content = client.request(settings.TWEMOIR_TWITTER_ACCESS_TOKEN_URL, "POST")
+        resp, content = client.request(
+            settings.TWEMOIR_TWITTER_ACCESS_TOKEN_URL, "POST")
         access_token = dict(urlparse.parse_qsl(content))
 
         
@@ -148,7 +152,7 @@ class Command(BaseCommand):
             print "Access Token:"
             print access_token.keys()
             print access_token.values()
-            print "You may now access protected resources using the access tokens above."
+            print "You may now use the Twitter API with these tokens."
 
         new_user_keyset = TMUserKeyset.objects.create(
             user_name=access_token['screen_name'],
@@ -159,10 +163,11 @@ class Command(BaseCommand):
 
         new_user_keyset.save()
 
-        print ""
-
-        print "- ACCESS_KEY = '%s'" % access_token['oauth_token']
-        print "- ACCESS_SECRET = '%s'" % access_token['oauth_token_secret']
-        print "+ NEW KEYSET ID = '%s'" % new_user_keyset.id
-        print ""
+        print "Saved new user keyset (TMUserKeyset.pk=%s)" % new_user_keyset.pk
+        
+        if verbose:
+            print "- ACCESS_KEY = '%s'" % access_token['oauth_token']
+            print "- ACCESS_SECRET = '%s'" % access_token['oauth_token_secret']
+            print "+ NEW KEYSET ID = '%s'" % new_user_keyset.id
+            print ""
 
