@@ -44,8 +44,8 @@ class Command(BaseCommand):
         from twemoir.conf import settings
         
         if user is None:
-            print "Syncing tweets from Twitter user '%s' (from twemoir.credentials) ..." % settings.TWEMOIR_AUTHOR_USER_NAME
-            user = settings.TWEMOIR_AUTHOR_USER_NAME
+            print "Syncing tweets from Twitter user '%s' (from twemoir.credentials) ..." % settings.AUTHOR_USER_NAME
+            user = settings.AUTHOR_USER_NAME
         
         else:
             print "Syncing tweets from Twitter user '%s' (from CLI arguments) ..." % user
