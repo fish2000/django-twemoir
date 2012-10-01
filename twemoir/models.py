@@ -54,8 +54,9 @@ class TMTweetManager(TaggedManager):
         from twemoir.utils import TMUserTweets
         if not user_id_or_username:
             user_id_or_username = settings.AUTHOR_USER_NAME
+        author_credentials = settings.AUTHOR_CREDENTIALS
         tweets = TMUserTweets(user_id_or_username, verbose=True,
-            **settings.AUTHOR_CREDENTIALS)
+            **author_credentials)
         self.load_tweets(tweets)
     
     def sync_latest(self, user_id_or_username=None):
@@ -63,15 +64,15 @@ class TMTweetManager(TaggedManager):
         from twemoir.utils import TMUserTweets
         if not user_id_or_username:
             user_id_or_username = settings.AUTHOR_USER_NAME
+        author_credentials = settings.AUTHOR_CREDENTIALS
         tweets = TMUserTweets(user_id_or_username, verbose=True, since_id=self.since_id(),
-            **settings.AUTHOR_CREDENTIALS)
+            **author_credentials)
         self.load_tweets(tweets)
     
     def load_tweet(self, status_id):
         """ Load a single tweet by its Twitter status ID,
         and save it locally as a TMTweet instance. """
         import twitter
-        #api = twitter.Api(**settings.AUTHOR_CREDENTIALS)
         tweet = twitter.GetStatus(status_id)
         self.load_tweets([tweet])
     
@@ -223,8 +224,9 @@ class TMStagedTweetDFARemix(StateMachine):
             GAL.acquire()
             
             try:
+                author_credentials = settings.AUTHOR_CREDENTIALS
                 tweet = TMUserStatusUpdate(instance.text, verbose=True,
-                    **settings.AUTHOR_CREDENTIALS)
+                    **author_credentials)
                 instance.user_id = long(tweet.user.id)
                 instance.tweet_struct = tweet.AsDict()
                 instance.save()

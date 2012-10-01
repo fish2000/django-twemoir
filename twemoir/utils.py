@@ -9,9 +9,11 @@ Created by FI$H 2000 on 2012-01-22.
 Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 
 """
+import re
 import sys
 import time
 import twitter
+import htmlentitydefs
 
 def TMPlayDead(**options):
     verbose = options.pop('verbose', False)
@@ -99,6 +101,43 @@ def TMUserTweets(user, **options):
         TMPlayDead(verbose=verbose, **options)
     
     return tweets.values()
+
+
+def nonentitize(text):
+    """
+    Removes HTML or XML character references and entities from a text string.
+
+    See also:
+    http://stackoverflow.com/q/57708/298171
+    http://effbot.org/zone/re-sub.htm#unescape-html
+
+    """
+    def fixup(m):
+        text = m.group(0)
+
+        if text[:2] == "&#": # character reference
+            try:
+                if text[:3] == "&#x":
+                    return unichr(int(text[3:-1], 16))
+                else:
+                    return unichr(int(text[2:-1]))
+            except ValueError:
+                pass
+
+        elif text[:5] == "&nbsp":
+            return " "
+
+        else: # named entity
+            try:
+                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
+            except KeyError:
+                pass
+
+        return text # leave as is
+
+    return re.sub("&#?\w+;", fixup, text)
+
+
 
 
 

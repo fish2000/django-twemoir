@@ -2,6 +2,39 @@
 from django.utils.functional import SimpleLazyObject
 from appconf import AppConf
 
+try:
+    from django.utils.functional import empty
+except ImportError:
+    empty = None
+
+class LazyDict(SimpleLazyObject, dict):
+    """ Lazy dict initialization. """
+    
+    def __len__(self):
+        if self._wrapped is empty:
+            self._setup()
+        return len(self._wrapped)
+    
+    def __getitem__(self, name):
+        if self._wrapped is empty:
+            self._setup()
+        return self._wrapped[name]
+
+    def __setitem__(self, name, value):
+        if self._wrapped is empty:
+            self._setup()
+        self._wrapped[name] = value
+    
+    def __iter__(self):
+        if self._wrapped is empty:
+            self._setup()
+        return self._wrapped
+    
+    def __contains__(self, item):
+        if self._wrapped is empty:
+            self._setup()
+        return (item in self._wrapped)
+
 class TwemoirAppConf(AppConf):
     """
     Pre-django-appconf, this was dealt with by defining these functions
@@ -38,7 +71,7 @@ class TwemoirAppConf(AppConf):
         def _author_credentials():
             from twemoir import models as tm
             return tm.TMUserKeyset.objects.author_credentials()
-        return SimpleLazyObject(_author_credentials)
+        return LazyDict(_author_credentials)
     
     def configure_author_user_name(self, value):
         def _author_user_name():
@@ -47,4 +80,5 @@ class TwemoirAppConf(AppConf):
         return SimpleLazyObject(_author_user_name)
 
 
-settings = SimpleLazyObject(lambda: TwemoirAppConf())
+#settings = SimpleLazyObject(lambda: TwemoirAppConf())
+settings = TwemoirAppConf()
