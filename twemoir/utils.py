@@ -9,8 +9,9 @@ Created by FI$H 2000 on 2012-01-22.
 Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 
 """
-import sys, time, twitter
-import re, htmlentitydefs
+import sys
+import time
+import twitter
 
 def TMPlayDead(**options):
     verbose = options.pop('verbose', False)
@@ -99,86 +100,5 @@ def TMUserTweets(user, **options):
     
     return tweets.values()
 
-
-def TMPreflightStruct(tweets, chapter_marker='>', paragraph_marker='-'):
-    """ Arrange the data from an iterable of TMTweets (say, a list, or a queryset)
-        into a set of nested dicts, as per the following:
-    
-        ~   » Hello, And Welcome To My Show.
-        ~   Blah blah blah. 
-        ~   ¶ Blah blah blah.
-        ~   Blah blah blah.
-        ~   Lorem ipsum. Si dolor amet.
-        ~   ¶ Deus ex machina. Caveat Emptor.
-        ~   ¶ Blah blah blah.
-    
-            ¶   Pilcrow             &#182; &para;       --> Starts a new paragraph.
-            »   Right Angle-Quote   &#187; &raquo;      --> Starts and labels a chapter
-    
-        ================================================
-    
-        chapters[0]
-        chapters[0]['title']                        = '' # always empty string for chapter 0
-        chapters[0]['paragraphs']                   = [...]
-        chapters[1]['title']                        = 'Something Titley'
-        chapters[1]['paragraphs']                   = [...]
-        chapters[1]['paragraphs'][0]
-        chapters[1]['paragraphs'][0]['chunks']      = [...]
-        """
-    chapters = []
-    chapters.append(dict(title='', paragraphs=[dict(chunks=[])]))
-    ch = 0
-    pr = 0
-    ck = 0
-    
-    for tweet in tweets:
-        txt = unicode(tweet.text).strip()
-        
-        if txt.startswith(chapter_marker):
-            ch += 1
-            pr = 0
-            ck = 0
-            chapters.append(dict(title=txt[1:], paragraphs=[dict(chunks=[])]))
-        
-        elif tweet.text.strip().startswith(paragraph_marker):
-            pr += 1
-            ck = 0
-            chapters[ch]['paragraphs'].append(dict(chunks=[]))
-        
-        else:
-            ck += 1
-            chapters[ch]['paragraphs'][pr]['chunks'].append(txt)
-    
-    return chapters
-
-
-def nonentitize(text):
-    """ Removes HTML or XML character references and entities from a text string.
-        See also: http://stackoverflow.com/q/57708/298171
-        See also: http://effbot.org/zone/re-sub.htm#unescape-html """
-    def fixup(m):
-        text = m.group(0)
-        
-        if text[:2] == "&#": # character reference
-            try:
-                if text[:3] == "&#x":
-                    return unichr(int(text[3:-1], 16))
-                else:
-                    return unichr(int(text[2:-1]))
-            except ValueError:
-                pass
-        
-        elif text[:5] == "&nbsp":
-            return " "
-        
-        else: # named entity
-            try:
-                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
-            except KeyError:
-                pass
-        
-        return text # leave as is
-    
-    return re.sub("&#?\w+;", fixup, text)
 
 
