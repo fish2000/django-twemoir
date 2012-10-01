@@ -3,7 +3,7 @@ __all__ = ('StateMachine', 'StateDefinition', 'StateTransition')
 from collections import defaultdict
 import logging
 
-from states2.exceptions import (TransitionNotFound, TransitionValidationError,
+from twemoir.lib.states2.exceptions import (TransitionNotFound, TransitionValidationError,
                                 UnknownState)
 
 

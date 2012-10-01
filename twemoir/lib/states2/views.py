@@ -3,7 +3,7 @@ from django.http import (HttpResponseRedirect, HttpResponseForbidden,
                          HttpResponse,)
 from django.shortcuts import get_object_or_404
 
-from states2.exceptions import PermissionDenied
+from twemoir.lib.states2.exceptions import PermissionDenied
 
 
 def make_state_transition(request):

@@ -22,6 +22,8 @@ class TwemoirAppConf(AppConf):
             **AUTHOR_CREDENTIALS())
     
     """
+    USER = 'twemoir'
+    
     AUTHOR_CREDENTIALS = None
     AUTHOR_USER_NAME = None
     
@@ -33,12 +35,16 @@ class TwemoirAppConf(AppConf):
         prefix = 'twemoir'
         
     def configure_author_credentials(self, value):
-        from twemoir.models import TMUserKeyset
-        return TMUserKeyset.objects.author_credentials()
+        def _author_credentials():
+            from twemoir import models as tm
+            return tm.TMUserKeyset.objects.author_credentials()
+        return SimpleLazyObject(_author_credentials)
     
     def configure_author_user_name(self, value):
-        from twemoir.models import TMUserKeyset
-        return TMUserKeyset.objects.author_user_name()
+        def _author_user_name():
+            from twemoir import models as tm
+            return tm.TMUserKeyset.objects.author_user_name()
+        return SimpleLazyObject(_author_user_name)
 
 
 settings = SimpleLazyObject(lambda: TwemoirAppConf())

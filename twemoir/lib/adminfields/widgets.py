@@ -77,5 +77,3 @@ class JsonPairInputs(Widget):
             jsontext = simplejson.dumps(twotuple)
         return jsontext
 
-
-class MarkItUpWidget(Widget):

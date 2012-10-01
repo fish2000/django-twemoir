@@ -65,6 +65,7 @@ setup(
         'twemoir': 'twemoir' },
     
     install_requires=[
+        'oauth2',
         'python-twitter',
         'django',
         'django-delegate',

@@ -53,25 +53,25 @@ class TMTweetManager(TaggedManager):
         """ Sync all tweets by the Twitter author as local TMTweets. """
         from twemoir.utils import TMUserTweets
         if not user_id_or_username:
-            user_id_or_username = settings.TWEMOIR_AUTHOR_USER_NAME
+            user_id_or_username = settings.AUTHOR_USER_NAME
         tweets = TMUserTweets(user_id_or_username, verbose=True,
-            **settings.TWEMOIR_AUTHOR_CREDENTIALS)
+            **settings.AUTHOR_CREDENTIALS)
         self.load_tweets(tweets)
     
     def sync_latest(self, user_id_or_username=None):
         """ Sync the latest tweets by the Twitter author locally as TMTweets. """
         from twemoir.utils import TMUserTweets
         if not user_id_or_username:
-            user_id_or_username = settings.TWEMOIR_AUTHOR_USER_NAME
+            user_id_or_username = settings.AUTHOR_USER_NAME
         tweets = TMUserTweets(user_id_or_username, verbose=True, since_id=self.since_id(),
-            **settings.TWEMOIR_AUTHOR_CREDENTIALS)
+            **settings.AUTHOR_CREDENTIALS)
         self.load_tweets(tweets)
     
     def load_tweet(self, status_id):
         """ Load a single tweet by its Twitter status ID,
         and save it locally as a TMTweet instance. """
         import twitter
-        #api = twitter.Api(**settings.TWEMOIR_AUTHOR_CREDENTIALS)
+        #api = twitter.Api(**settings.AUTHOR_CREDENTIALS)
         tweet = twitter.GetStatus(status_id)
         self.load_tweets([tweet])
     
@@ -224,7 +224,7 @@ class TMStagedTweetDFARemix(StateMachine):
             
             try:
                 tweet = TMUserStatusUpdate(instance.text, verbose=True,
-                    **settings.TWEMOIR_AUTHOR_CREDENTIALS)
+                    **settings.AUTHOR_CREDENTIALS)
                 instance.user_id = long(tweet.user.id)
                 instance.tweet_struct = tweet.AsDict()
                 instance.save()
@@ -374,8 +374,6 @@ class TMStagedTweet(StateModel):
     
     class Meta:
         abstract = False
-        order_with_respect_to = 'draft'
-        unique_together = ('draft','signature')
         verbose_name = "Staged Tweet"
         verbose_name_plural = "Staged Tweet Objects"
     
@@ -422,6 +420,12 @@ class TMAppKeyset(TMKeyset):
     
     objects = TMAppKeysetManager()
     
+    app_name = models.CharField(
+        verbose_name="Twitter App Name",
+        max_length=255,
+        blank=True,
+        null=True)
+    
     owner = models.OneToOneField(User,
         related_name='app_keyset',
         on_delete=models.SET_NULL,
@@ -445,7 +449,7 @@ class TMAppKeyset(TMKeyset):
             self._get_consumer())
     
     def _get_request_token(self,
-        url=settings.TWEMOIR_TWITTER_REQUEST_TOKEN_URL, method="GET"):
+        url=settings.TWITTER_REQUEST_TOKEN_URL, method="GET"):
         import urlparse
         client = self._get_client()
         resp, content = client.request(url, method)
@@ -453,7 +457,7 @@ class TMAppKeyset(TMKeyset):
         return request_token
     
     def _get_request_token_with_callback(self, callback,
-        url=settings.TWEMOIR_TWITTER_REQUEST_TOKEN_URL, method="POST"):
+        url=settings.TWITTER_REQUEST_TOKEN_URL, method="POST"):
         import urlparse, urllib
         client = self._get_client()
         resp, content = client.request(url, method,
@@ -473,6 +477,21 @@ class TMAppKeyset(TMKeyset):
         unique_together = ('key','secret')
         verbose_name = "Application Keyset"
         verbose_name_plural = "Application Keysets"
+    
+    def __repr__(self):
+        return "<TMAppKeyset ID:%s>" % self.pk
+    
+    def __str__(self):
+        """ Return the app name (or pk-label) as UTF-8. """
+        if self.app_name:
+            return self.app_name.encode('UTF-8', 'replace')
+        return repr(self)
+    
+    def __unicode__(self):
+        """ Return the app name (or pk-label) as Unicode. """
+        if self.app_name:
+            return self.app_name
+        return unicode(repr(self))
 
 
 class TMUserKeysetQuerySet(models.query.QuerySet):
