@@ -121,11 +121,11 @@ class Command(BaseCommand):
         consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
         client = oauth.Client(consumer)
         resp, content = client.request(
-            settings.TWEMOIR_TWITTER_REQUEST_TOKEN_URL, "GET")
+            settings.TWITTER_REQUEST_TOKEN_URL, "GET")
 
         request_token = dict(urlparse.parse_qsl(content))
         auth_url = "%s?oauth_token=%s" % (
-            settings.TWEMOIR_TWITTER_AUTHORIZE_URL,
+            settings.TWITTER_AUTHORIZE_URL,
             request_token['oauth_token'])
 
         print 'Please authorize: ' + auth_url
@@ -143,7 +143,7 @@ class Command(BaseCommand):
         client = oauth.Client(consumer, token)
 
         resp, content = client.request(
-            settings.TWEMOIR_TWITTER_ACCESS_TOKEN_URL, "POST")
+            settings.TWITTER_ACCESS_TOKEN_URL, "POST")
         access_token = dict(urlparse.parse_qsl(content))
 
         
