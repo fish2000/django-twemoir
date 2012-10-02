@@ -1,5 +1,9 @@
 include .gitignore
 include README.md
 include setup.py
-recursive-include twemoir *.py
+include requirements.txt
+include runserver-env.txt
+recursive-include twemoir *.*
+recursive-include example *.*
+recursive-include etc *.*
 
