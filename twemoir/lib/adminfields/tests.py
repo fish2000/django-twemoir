@@ -1,9 +1,9 @@
 from django.test import TestCase
 
 
-class admin-fieldsTest(TestCase):
+class adminfieldsTest(TestCase):
     """
     Tests for django-admin-fields
     """
-    def test_admin-fields(self):
+    def test_adminfields(self):
         pass
