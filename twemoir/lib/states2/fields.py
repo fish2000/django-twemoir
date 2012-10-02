@@ -1,4 +1,4 @@
-__all__ = ('StateField',)
+#__all__ = ('StateField',)
 
 from django.db import models
 from django.utils.functional import curry
@@ -114,22 +114,10 @@ class StateField(models.CharField, MixIntrospector):
             return result
 
         sender.save = new_save
-
-
-# South introspection
-try:
-    from south.modelsinspector import add_introspection_rules
-except ImportError:
-    pass
-else:
-    add_introspection_rules(
-        [
-            (
-                (StateField,), [], {
-                    'max_length': [100, { "is_value": True, }],
-                }
-            )
-        ], ["^states2\.fields\.StateField",
-            "^lib\.states2\.fields\.StateField",
-            "^twemoir\.lib\.states2\.fields\.StateField"]
-    )
+    
+    def south_field_triple(self):
+        """ Returns the field's module/classname pseudo-modulepath for South. """
+        from south.modelsinspector import introspector
+        field_class = "twemoir.lib.states2.fields.StateField"
+        args, kwargs = introspector(self)
+        return (field_class, args, kwargs)
