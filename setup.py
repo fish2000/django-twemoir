@@ -25,9 +25,10 @@
 #
 from __future__ import print_function
 import sys
+import os
 
 name = 'django-twemoir'
-version = '0.1.0'
+version = '0.1.1'
 packages = []
 description = 'Twitter data models.'
 keywords = 'python endjango-twemoirment variable simple template text'
@@ -36,13 +37,36 @@ classifiers = [
     'Development Status :: 5 - Production/Stable']
 
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
+
 except ImportError:
     from distutils.core import setup
 
+    def is_package(path):
+        return (os.path.isdir(path) and \
+            os.path.isfile(
+                os.path.join(
+                    path, '__init__.py')))
+    
+    def find_packages(path, base=""):
+        """ Find all packages in path
+            See also http://wiki.python.org/moin/Distutils/Cookbook/AutoPackageDiscovery"""
+        packages = {}
+        for item in os.listdir(path):
+            dir = os.path.join(path, item)
+            if is_package(dir):
+                if base:
+                    module_name = "%(base)s.%(item)s" % vars()
+                else:
+                    module_name = item
+                packages[module_name] = dir
+                packages.update(
+                    find_packages(
+                        dir, module_name))
+        return packages
+
 if 'sdist' in sys.argv and 'upload' in sys.argv:
     import commands
-    import os
     finder = "/usr/bin/find %s \( -name \*.pyc -or -name .DS_Store \) -delete"
     theplace = os.getcwd()
     if theplace not in (".", "/"):
@@ -53,7 +77,7 @@ if 'sdist' in sys.argv and 'upload' in sys.argv:
 
 setup(
     name=name, version=version, description=description,
-    keywords=keywords, platforms=['any'], packages=['twemoir'],
+    keywords=keywords, platforms=['any'],
     
     author=u"Alexander Bohn", author_email='fish2000@gmail.com',
     
@@ -61,9 +85,31 @@ setup(
     url='http://github.com/fish2000/%s/' % name,
     download_url='http://github.com/fish2000/%s/zipball/master' % name,
     
-    package_dir={
-        'twemoir': 'twemoir' },
-    
+    packages=find_packages(),
+    package_data={
+        'etc': ['*.jpg'],
+        'example': [
+            'face/*.*',
+            'face/media/*.*',
+            'face/static/admin/*.*',
+            'face/static/admin/css/*.css',
+            'face/static/admin/js/*.js',
+            'face/static/admin/less/*.less',
+            'face/static/admin/img/*.*',
+            'face/static/admin/*.css'],
+        
+        'twemoir': [
+            'static/admin/*.*',
+            'static/admin/css/*.css',
+            'static/admin/js/*.js',
+            'static/admin/less/*.less',
+            'static/admin/img/*.*',
+            'static/admin/*.css'],
+        
+        '': [
+            '*.html', '*.css', '*.js'],
+        },
+
     install_requires=[
         'oauth2',
         'python-twitter',
