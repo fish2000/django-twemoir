@@ -28,7 +28,7 @@ import sys
 import os
 
 name = 'django-twemoir'
-version = '0.1.1'
+version = '0.1.2'
 packages = []
 description = 'Twitter data models.'
 keywords = 'python endjango-twemoirment variable simple template text'
@@ -84,32 +84,7 @@ setup(
     license='MIT',
     url='http://github.com/fish2000/%s/' % name,
     download_url='http://github.com/fish2000/%s/zipball/master' % name,
-    
     packages=find_packages(),
-    package_data={
-        'etc': ['*.jpg'],
-        'example': [
-            'face/*.*',
-            'face/media/*.*',
-            'face/static/admin/*.*',
-            'face/static/admin/css/*.css',
-            'face/static/admin/js/*.js',
-            'face/static/admin/less/*.less',
-            'face/static/admin/img/*.*',
-            'face/static/admin/*.css'],
-        
-        'twemoir': [
-            'static/admin/*.*',
-            'static/admin/css/*.css',
-            'static/admin/js/*.js',
-            'static/admin/less/*.less',
-            'static/admin/img/*.*',
-            'static/admin/*.css'],
-        
-        '': [
-            '*.html', '*.css', '*.js'],
-        },
-
     install_requires=[
         'oauth2',
         'python-twitter',
