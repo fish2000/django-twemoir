@@ -1,4 +1,4 @@
 TWEMOIR
 =======
 
-Read me, dogg.
+Twitter memoirs: Stateful Django models encapsulating Twitter data.

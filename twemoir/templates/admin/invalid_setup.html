@@ -2,8 +2,8 @@
 {% load i18n %}
 {% load url from future %}
 
-{% block breadcrumbs %}
-<ul class="breadcrumbs">
+{% block breadcrumb %}
+<ul class="breadcrumb">
 	<li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a> <span class="divider">/</span></li>
 	<li class="active">{{ title }}</li>
 </ul>

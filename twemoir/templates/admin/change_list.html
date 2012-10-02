@@ -19,7 +19,7 @@
 {% block bodyclass %}change-list{% endblock %}
 
 {% if not is_popup %}
-{% block breadcrumbs %}
+{% block breadcrumb %}
 <ul class="breadcrumb">
 	<li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a> <span class="divider">/</span></li>
 	<li><a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">{{ app_label|capfirst|escape }}</a> <span class="divider">/</span></li>
@@ -28,13 +28,12 @@
 {% endblock %}
 {% endif %}
 
-{% block content %}
     {% block object-tools %}
       {% if has_add_permission %}
         <ul class="object-tools">
           {% block object-tools-items %}
-            <li>
-              <a href="{% url cl.opts|admin_urlname:'add' %}{% if is_popup %}?_popup=1{% endif %}" class="btn btn-success">
+            <li style="display: inline-block; margin-top: 8px;">
+              <a href="{% url cl.opts|admin_urlname:'add' %}{% if is_popup %}?_popup=1{% endif %}" class="btn btn-info pull-right clearfix">
                 <i class="icon-plus icon-white"></i> {% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}
               </a>
             </li>
@@ -42,6 +41,7 @@
         </ul>
       {% endif %}
     {% endblock %}
+    {% block content %}
     {% if cl.formset.errors %}
         <p class="errornote">
         {% blocktrans count cl.formset.errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}

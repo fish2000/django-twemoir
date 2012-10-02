@@ -14,7 +14,7 @@
 {% block main_classes %}span12{% endblock main_classes %}
 
 {% if not is_popup %}
-{% block breadcrumbs %}
+{% block breadcrumb %}
 <ul class="breadcrumb">
 	<li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a> <span class="divider">/</span></li>
 	<li><a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ app_label|capfirst|escape }}</a> <span class="divider">/</span></li>

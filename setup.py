@@ -29,7 +29,7 @@ import sys
 name = 'django-twemoir'
 version = '0.1.0'
 packages = []
-description = 'Put endjango-twemoirment variables in text file templates.'
+description = 'Twitter data models.'
 keywords = 'python endjango-twemoirment variable simple template text'
 
 classifiers = [

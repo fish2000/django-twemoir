@@ -1,0 +1,1 @@
+DJANGO_SETTINGS_MODULE='example.settings' PYTHONPATH=$PWD:$PWD/..:/Users/fish/Dropbox/django-delegate python ./manage.py runserver
