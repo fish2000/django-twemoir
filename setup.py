@@ -28,7 +28,7 @@ import sys
 import os
 
 name = 'django-twemoir'
-version = '0.1.2'
+version = '0.1.3'
 packages = []
 description = 'Twitter data models.'
 keywords = 'python endjango-twemoirment variable simple template text'
@@ -84,7 +84,11 @@ setup(
     license='MIT',
     url='http://github.com/fish2000/%s/' % name,
     download_url='http://github.com/fish2000/%s/zipball/master' % name,
+    
     packages=find_packages(),
+    package_data={'': ['*.*']}
+    include_package_data=True
+    
     install_requires=[
         'oauth2',
         'python-twitter',
@@ -93,6 +97,7 @@ setup(
         'django-docfield-couchdb',
         'django-appconf',
         'django-tagging'],
+    
     
     classifiers=classifiers+[
         'License :: OSI Approved :: MIT License',
