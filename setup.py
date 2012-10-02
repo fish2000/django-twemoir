@@ -86,8 +86,8 @@ setup(
     download_url='http://github.com/fish2000/%s/zipball/master' % name,
     
     packages=find_packages(),
-    package_data={'': ['*.*']}
-    include_package_data=True
+    package_data={'': ['*.*']},
+    include_package_data=True,
     
     install_requires=[
         'oauth2',
