@@ -15,6 +15,7 @@ from twemoir.managers import TaggedManager, TaggedQuerySet
 from twemoir.modelfields import CharSignatureField
 
 # for TMStagedTweet and TMStagedDraft
+from twemoir.lib.states2.fields import StateField # solely to assuage South
 from twemoir.lib.states2.models import (StateMachine, StateDefinition,
                                         StateTransition, StateModel)
 
@@ -561,3 +562,20 @@ class TMUserKeyset(TMKeyset):
     
     owner = property(_get_owner)
 
+# South introspection
+try:
+    from south.modelsinspector import add_introspection_rules
+except ImportError:
+    pass
+else:
+    add_introspection_rules(
+        [
+            (
+                (StateField,), [], {
+                    'max_length': [100, { "is_value": True, }],
+                }
+            )
+        ], ["^states2\.fields\.StateField",
+            "^lib\.states2\.fields\.StateField",
+            "^twemoir\.lib\.states2\.fields\.StateField"]
+    )

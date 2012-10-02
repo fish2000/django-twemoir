@@ -9,7 +9,6 @@ from twemoir.lib.states2.model_methods import (get_STATE_transitions,
                                    get_STATE_info, get_STATE_machine)
 
 
-
 class MixIntrospector(object):
 
    def south_field_triple(self):
@@ -18,6 +17,7 @@ class MixIntrospector(object):
        field_class = "twemoir.lib.states2.fields.%s" % self.__class__.__name__
        args, kwargs = introspector(self)
        return (field_class, args, kwargs)
+
 
 class StateField(models.CharField, MixIntrospector):
     '''
@@ -37,6 +37,9 @@ class StateField(models.CharField, MixIntrospector):
         kwargs.setdefault('max_length', 100)
         kwargs['choices'] = None
         super(StateField, self).__init__(**kwargs)
+    
+    def get_internal_type(self):
+        return "CharField"
 
     def contribute_to_class(self, cls, name):
         '''
