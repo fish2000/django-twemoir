@@ -111,11 +111,11 @@ except ImportError:
 else:
     add_introspection_rules([
         (
-            (StateField,),
-            [],
-            {
-                'max_length': [100, {"is_value": True}],
-            },
-        ),
-
-        ], ["^states2\.fields\.StateField"])
+            (StateField,), [], {
+                'max_length': [100, {"is_value": True}], }
+        )],
+        [
+            "^states2\.fields\.StateField",
+            "^lib\.states2\.fields\.StateField",
+            "^twemoir\.lib\.states2\.fields\.StateField",
+        ])
