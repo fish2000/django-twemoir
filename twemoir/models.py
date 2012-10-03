@@ -1,4 +1,3 @@
-
 import sys, threading
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
@@ -326,7 +325,7 @@ class TMStagedTweetQuerySet(TaggedQuerySet):
     
     @delegate
     def make_transition(self, trans, user=None):
-        import states2.exceptions
+        import twemoir.lib.states2.exceptions as states2_exc
         failures = set()
         tweets = self.all()
         
@@ -334,7 +333,7 @@ class TMStagedTweetQuerySet(TaggedQuerySet):
             with transaction.commit_manually():
                 try:
                     tweet.make_transition(trans, user)
-                except states2.exceptions.TransitionException:
+                except states2_exc.TransitionException:
                     failures.add(tweet.id)
                 finally:
                     transaction.commit()
