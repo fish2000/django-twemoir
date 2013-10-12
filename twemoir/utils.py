@@ -38,7 +38,7 @@ def TMPlayDead(**options):
 
 def TMUserStatusUpdate(tweet_text=u"", **options):
     """ Post a status update (a "tweet") to Twitter, as signified by
-        the colloquial verb phrase "to tweet" as per typical employ.
+        the colloquial verb phrase "to tweet" per typical employ.
         See Also: http://stackoverflow.com/a/4474362/298171 """
     verbose = options.pop('verbose', False)
     api = twitter.Api(**options)

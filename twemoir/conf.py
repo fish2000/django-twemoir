@@ -39,7 +39,6 @@ class TwemoirAppConf(AppConf):
     """
     Pre-django-appconf, this was dealt with by defining these functions
     at the bottom of twemoir/models.py:
-    
         
         def AUTHOR_CREDENTIALS():
             return TMUserKeyset.objects.author_credentials()
