@@ -10,6 +10,7 @@ from docfield.modelfields import JSONField
 from django.contrib.auth.models import User
 from tagging.fields import TagField
 from tagging.models import Tag as Tagg
+from ttp import ttp
 
 from twemoir.managers import TaggedManager, TaggedQuerySet
 from twemoir.modelfields import CharSignatureField
@@ -19,6 +20,7 @@ from twemoir.lib.states2.fields import StateField # solely to assuage South
 from twemoir.lib.states2.models import (StateMachine, StateDefinition,
                                         StateTransition, StateModel)
 
+tweetparser = ttp.Parser()
 
 class TMTweetQuerySet(TaggedQuerySet):
     @delegate
@@ -146,6 +148,10 @@ class TMTweet(models.Model):
         verbose_name = "Author Tweet"
         verbose_name_plural = "Author Tweets"
     
+    @property
+    def html(self):
+        return tweetparser.parse(self.text).html
+    
     def _get_tags(self):
         """ Get tagging.models.Tags for a tweet's hashtags. """
         return Tagg.objects.get_for_object(self)
@@ -169,7 +175,6 @@ class TMTweet(models.Model):
     def __getattr__(self, name):
         """ Try getting non-model attributes by name from
             the TMTweet.tweet_struct dict. """
-        
         try:
             return super(TMTweet, self).__getattr__(name)
         except AttributeError, err:
@@ -379,6 +384,10 @@ class TMStagedTweet(StateModel):
         abstract = False
         verbose_name = "Staged Tweet"
         verbose_name_plural = "Staged Tweet Objects"
+    
+    @property
+    def html(self):
+        return tweetparser.parse(self.text).html
     
     def check_signature(self):
         from django.core.signing import BadSignature

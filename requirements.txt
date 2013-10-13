@@ -1,6 +1,7 @@
 
 oauth2>=1.5
 python-twitter>=1.9.0
+twitter-text-python>=1.0.1
 django>=1.4
 django-delegate>=0.2.2
 django-docfield-couchdb>=0.1.1

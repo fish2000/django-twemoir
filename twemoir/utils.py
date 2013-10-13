@@ -21,7 +21,6 @@ def TMPlayDead(**options):
     api = twitter.Api(**options)
     
     try:
-        #sleep_time = api.MaximumHitFrequency()
         sleep_time = int(api.GetSleepTime(resource)) + 1
     
     except twitter.TwitterError, err:
