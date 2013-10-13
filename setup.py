@@ -28,7 +28,7 @@ import sys
 import os
 
 name = 'django-twemoir'
-version = '0.2.0'
+version = '0.2.1'
 packages = []
 description = 'Twitter data models'
 keywords = 'python django twitter data model sync'
@@ -92,6 +92,7 @@ setup(
     install_requires=[
         'oauth2',
         'python-twitter',
+        'twitter-text-python',
         'django',
         'django-delegate',
         'django-docfield-couchdb',
