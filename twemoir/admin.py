@@ -29,9 +29,39 @@ class TMTweetHashtagFilter(admin.SimpleListFilter):
             len(t.name) > 15 and u"…" or u"",
             t.items.count())) for t in sorted(tags,
                 key=lambda t: t.items.count(), reverse=True)]
+    
     def queryset(self, request, queryset):
         tagged = queryset.tagged(self.value())
         return tagged.count() > 0 and tagged or queryset.all()
+
+# class TMTweeterFilter(admin.SimpleListFilter):
+#     title = u"Tweeter"
+#     parameter_name = 'tweeter'
+#     def __init__(self, request, params, model, model_admin):
+#         import simplejson as json
+#         self.__model__ = model
+#         self._structs = [json.loads(ts[0])['user_mentions'] \
+#             for ts in TMTweet.objects.filter(
+#                 tweet_struct__icontains='user_mentions'
+#             ).values_list('tweet_struct')]
+#         self._screen_names = set(map(
+#             lambda u: u['screen_name'], reduce(
+#                 lambda a, b: a+b, structs)))
+#         self.title = u"Tweeter (%s)" % len(self._screen_names)
+#         super(TMTweeterFilter, self).__init__(request, params, model, model_admin)
+#     
+#     def lookups(self, request, model_admin):
+#         return [(str(t.name), u"#%s%s (%s)" % (
+#             t.name[:15],
+#             len(t.name) > 15 and u"…" or u"",
+#             t.items.count())) for t in sorted(tags,
+#                 key=lambda t: t.items.count(), reverse=True)]
+#     
+#     def queryset(self, request, queryset):
+#         tagged = queryset.tagged(self.value())
+#         return tagged.count() > 0 and tagged or queryset.all()
+
+
 
 class TMTweetAdmin(admin.ModelAdmin):
     ordering = ('status_id', 'id',)

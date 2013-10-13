@@ -180,7 +180,7 @@ class TMTweet(models.Model):
         except AttributeError, err:
             if self.tweet_struct is not None:
                 if name in self.tweet_struct:
-                    return eval(self.tweet_struct).get(name)
+                    return self.tweet_struct.get(name)
                 else:
                     raise AttributeError(err)
             else:
