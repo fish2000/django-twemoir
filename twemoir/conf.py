@@ -45,27 +45,8 @@ class LazyDict(SimpleLazyObject, dict):
             self._setup()
         return self._wrapped
 
-
 class TwemoirAppConf(AppConf):
-    """
-    Pre-django-appconf, this was dealt with by defining these functions
-    at the bottom of twemoir/models.py:
     
-        
-        def AUTHOR_CREDENTIALS():
-            return TMUserKeyset.objects.author_credentials()
-
-        def AUTHOR_USER_NAME():
-            return TMUserKeyset.objects.author_user_name()
-
-    ... which would be called as part of any function directly leading to
-    the invocation of the Twitter API. The call delivered the credentials
-    like so:
-    
-        will_call_twitter(something, somevalue=something_else,
-            **AUTHOR_CREDENTIALS())
-    
-    """
     USER = 'twitter-author-username'
     
     AUTHOR_CREDENTIALS = None
@@ -90,6 +71,4 @@ class TwemoirAppConf(AppConf):
             return tm.TMUserKeyset.objects.author_user_name()
         return SimpleLazyObject(_author_user_name)
 
-
-#settings = SimpleLazyObject(lambda: TwemoirAppConf())
 settings = TwemoirAppConf()

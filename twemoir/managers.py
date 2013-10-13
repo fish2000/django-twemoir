@@ -13,7 +13,8 @@ class TaggedQuerySet(models.query.QuerySet):
     
     @delegate
     def tagged(self, name=None):
-        """ Return a QuerySet of the model instances tagged with the named tag. """
+        """ Return a QuerySet of the model instances,
+            tagged with the named tag. """
         if name:
             try:
                 t = tags.Tag.objects.filter(name=name).get()
@@ -27,8 +28,10 @@ class TaggedQuerySet(models.query.QuerySet):
     
     @delegate
     def tags(self, related_to=None):
-        """ Returns a QuerySet of tagging.models.Tag objects related to members of the QuerySet,
-        optionally limited to those also related to the tag or tags named in related_to """
+        """ Returns a QuerySet of tagging.models.Tag objects
+            related to members of the QuerySet, optionally limited
+            to either those also related to the tag, or those which
+            are named (with related_to). """
         if related_to is None:
             return tags.Tag.objects.filter(
                 id__in=(t.id for t in tags.Tag.objects.usage_for_queryset(self.all()))
@@ -42,9 +45,9 @@ class TaggedQuerySet(models.query.QuerySet):
     
     @delegate
     def tagnames(self, related_to=None):
-        """ Returns a list of the string names of all tags used by members of the QuerySet,
-        optionally limited to those related to the tag or tags named in related_to """
-        #return (t.name for t in tags.Tag.objects.usage_for_queryset(self.all()))
+        """ Returns a list of the string names of all tags used
+            by members of the QuerySet, optionally limited to those
+            related to the tag, or to tags specifically named """
         return (t.name for t in self.tags(related_to=related_to))
 
 
