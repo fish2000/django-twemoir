@@ -12,15 +12,17 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 import re
 import sys
 import time
-import twitter
 import htmlentitydefs
 
 def TMPlayDead(**options):
+    import twitter
+    resource = options.pop('resource', '/statuses/user_timeline')
     verbose = options.pop('verbose', False)
     api = twitter.Api(**options)
     
     try:
-        sleep_time = api.MaximumHitFrequency()
+        #sleep_time = api.MaximumHitFrequency()
+        sleep_time = int(api.GetSleepTime(resource)) + 1
     
     except twitter.TwitterError, err:
         if verbose:
@@ -38,8 +40,9 @@ def TMPlayDead(**options):
 
 def TMUserStatusUpdate(tweet_text=u"", **options):
     """ Post a status update (a "tweet") to Twitter, as signified by
-        the colloquial verb phrase "to tweet" per typical employ.
+        the colloquial verb phrase "to tweet" as per typical employ.
         See Also: http://stackoverflow.com/a/4474362/298171 """
+    import twitter
     verbose = options.pop('verbose', False)
     api = twitter.Api(**options)
     
@@ -53,8 +56,10 @@ def TMUserStatusUpdate(tweet_text=u"", **options):
 def TMUserTweets(user, **options):
     """ Get all tweets for a user.
         See Also: http://blogs.fluidinfo.com/terry/2009/06/24/python-code-for-retrieving-all-your-tweets/ """
+    import twitter
     verbose = options.pop('verbose', False)
     since_id = options.pop('since_id', None)
+    print options
     api = twitter.Api(**options)
     
     tweets = {}
@@ -64,7 +69,7 @@ def TMUserTweets(user, **options):
     while True:
         
         try:
-            statuses = api.GetUserTimeline(user, count=200, include_entities=True,
+            statuses = api.GetUserTimeline(screen_name=user, count=200,
                 max_id=max_id, since_id=since_id)
         
         except twitter.TwitterError, err:

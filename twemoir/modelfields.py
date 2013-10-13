@@ -5,11 +5,9 @@ from django.db import models
 from django.db.models import signals
 
 class CharSignatureField(models.CharField):
-    """
-    Store the cryptographic signature for an instance
-    of models.CharField (on the same model).
+    """ Store the cryptographic signature for an instance
+        of models.CharField (on the same model). """
     
-    """
     __metaclass__ = models.SubfieldBase
     
     # SIGNATURE_LENGTH is set to 27, which is the value of:

@@ -1,4 +1,6 @@
+
 import sys, threading
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db import transaction
@@ -9,7 +11,6 @@ from django.contrib.auth.models import User
 from tagging.fields import TagField
 from tagging.models import Tag as Tagg
 
-from twemoir.conf import settings
 from twemoir.managers import TaggedManager, TaggedQuerySet
 from twemoir.modelfields import CharSignatureField
 
@@ -28,7 +29,7 @@ class TMTweetQuerySet(TaggedQuerySet):
     @delegate
     def max_id(self, user_id=None):
         """ A misnamed function - get a number lower than the lowest
-        TMTweet's Twitter status ID. """
+            TMTweet's Twitter status ID. """
         try:
             subset = user_id and self.filter(user_id=user_id) or self.all()
             return (subset.aggregate(max_id=models.Min('status_id'))['max_id'] - 1)
@@ -38,7 +39,7 @@ class TMTweetQuerySet(TaggedQuerySet):
     @delegate
     def since_id(self, user_id=None):
         """ A misnamed function - get the highest TMTweet's
-        Twitter status ID. """
+            Twitter status ID. """
         try:
             subset = user_id and self.filter(user_id=user_id) or self.all()
             return subset.aggregate(since_id=models.Max('status_id'))['since_id']
@@ -53,8 +54,8 @@ class TMTweetManager(TaggedManager):
         """ Sync all tweets by the Twitter author as local TMTweets. """
         from twemoir.utils import TMUserTweets
         if not user_id_or_username:
-            user_id_or_username = settings.AUTHOR_USER_NAME
-        author_credentials = settings.AUTHOR_CREDENTIALS
+            user_id_or_username = settings.TWEMOIR_AUTHOR_USER_NAME
+        author_credentials = settings.TWEMOIR_AUTHOR_CREDENTIALS.as_dict()
         tweets = TMUserTweets(user_id_or_username, verbose=True,
             **author_credentials)
         self.load_tweets(tweets)
@@ -63,15 +64,15 @@ class TMTweetManager(TaggedManager):
         """ Sync the latest tweets by the Twitter author locally as TMTweets. """
         from twemoir.utils import TMUserTweets
         if not user_id_or_username:
-            user_id_or_username = settings.AUTHOR_USER_NAME
-        author_credentials = settings.AUTHOR_CREDENTIALS
+            user_id_or_username = settings.TWEMOIR_AUTHOR_USER_NAME
+        author_credentials = settings.TWEMOIR_AUTHOR_CREDENTIALS.as_dict()
         tweets = TMUserTweets(user_id_or_username, verbose=True, since_id=self.since_id(),
             **author_credentials)
         self.load_tweets(tweets)
     
     def load_tweet(self, status_id):
         """ Load a single tweet by its Twitter status ID,
-        and save it locally as a TMTweet instance. """
+            and save it locally as a TMTweet instance. """
         import twitter
         tweet = twitter.GetStatus(status_id)
         self.load_tweets([tweet])
@@ -167,7 +168,7 @@ class TMTweet(models.Model):
     
     def __getattr__(self, name):
         """ Try getting non-model attributes by name from
-        the TMTweet.tweet_struct dict. """
+            the TMTweet.tweet_struct dict. """
         
         try:
             return super(TMTweet, self).__getattr__(name)
@@ -224,7 +225,7 @@ class TMStagedTweetDFARemix(StateMachine):
             GAL.acquire()
             
             try:
-                author_credentials = settings.AUTHOR_CREDENTIALS
+                author_credentials = settings.TWEMOIR_AUTHOR_CREDENTIALS.as_dict()
                 tweet = TMUserStatusUpdate(instance.text, verbose=True,
                     **author_credentials)
                 instance.user_id = long(tweet.user.id)
@@ -325,7 +326,7 @@ class TMStagedTweetQuerySet(TaggedQuerySet):
     
     @delegate
     def make_transition(self, trans, user=None):
-        import twemoir.lib.states2.exceptions as states2_exc
+        import states2.exceptions
         failures = set()
         tweets = self.all()
         
@@ -333,7 +334,7 @@ class TMStagedTweetQuerySet(TaggedQuerySet):
             with transaction.commit_manually():
                 try:
                     tweet.make_transition(trans, user)
-                except states2_exc.TransitionException:
+                except states2.exceptions.TransitionException:
                     failures.add(tweet.id)
                 finally:
                     transaction.commit()
@@ -450,18 +451,20 @@ class TMAppKeyset(TMKeyset):
         return oauth.Client(
             self._get_consumer())
     
-    def _get_request_token(self,
-        url=settings.TWITTER_REQUEST_TOKEN_URL, method="GET"):
+    def _get_request_token(self, url=None, method="GET"):
         import urlparse
         client = self._get_client()
+        if url is None:
+            url = settings.TWEMOIR_TWITTER_REQUEST_TOKEN_URL
         resp, content = client.request(url, method)
         request_token = dict(urlparse.parse_qsl(content))
         return request_token
     
-    def _get_request_token_with_callback(self, callback,
-        url=settings.TWITTER_REQUEST_TOKEN_URL, method="POST"):
+    def _get_request_token_with_callback(self, callback, url=None, method="POST"):
         import urlparse, urllib
         client = self._get_client()
+        if url is None:
+            url = settings.TWEMOIR_TWITTER_REQUEST_TOKEN_URL
         resp, content = client.request(url, method,
             body=urllib.urlencode({ 'oauth_callback': callback, }))
         request_token = dict(urlparse.parse_qsl(content))
@@ -504,7 +507,7 @@ class TMUserKeysetManager(DelegateManager):
     
     def get_author_user_keyset(self):
         """ Hardcoded for now. """
-        return self.get(user_name='twemoir')
+        return self.get(user_name='twitter-author-username')
     
     def author_credentials(self):
         return self.get_author_user_keyset().credentials

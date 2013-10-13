@@ -10,8 +10,6 @@ Copyright (c) 2011 Objects In Space And Time, LLC. All rights reserved.
 from django.core.management.base import BaseCommand
 from optparse import make_option
 
-from twemoir.models import TMTweet
-
 tmsync_help = '''
     Syncs tweets from the twemoir author's account (as defined
     in twemoir/credentials.py) into the local database,
@@ -49,6 +47,8 @@ class Command(BaseCommand):
         
         else:
             print "Syncing tweets from Twitter user '%s' (from CLI arguments) ..." % user
+        
+        from twemoir.models import TMTweet
         
         if options.get('latest'):
             TMTweet.objects.sync_latest(user)

@@ -28,7 +28,7 @@ import sys
 import os
 
 name = 'django-twemoir'
-version = '0.1.3'
+version = '0.1.5'
 packages = []
 description = 'Twitter data models.'
 keywords = 'python endjango-twemoirment variable simple template text'

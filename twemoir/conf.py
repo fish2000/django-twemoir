@@ -34,11 +34,23 @@ class LazyDict(SimpleLazyObject, dict):
         if self._wrapped is empty:
             self._setup()
         return (item in self._wrapped)
+    
+    def __repr__(self):
+        if self._wrapped is empty:
+            self._setup()
+        return repr(self._wrapped)
+    
+    def as_dict(self):
+        if self._wrapped is empty:
+            self._setup()
+        return self._wrapped
+
 
 class TwemoirAppConf(AppConf):
     """
     Pre-django-appconf, this was dealt with by defining these functions
     at the bottom of twemoir/models.py:
+    
         
         def AUTHOR_CREDENTIALS():
             return TMUserKeyset.objects.author_credentials()
@@ -54,7 +66,7 @@ class TwemoirAppConf(AppConf):
             **AUTHOR_CREDENTIALS())
     
     """
-    USER = 'twemoir'
+    USER = 'twitter-author-username'
     
     AUTHOR_CREDENTIALS = None
     AUTHOR_USER_NAME = None
@@ -69,7 +81,7 @@ class TwemoirAppConf(AppConf):
     def configure_author_credentials(self, value):
         def _author_credentials():
             from twemoir import models as tm
-            return tm.TMUserKeyset.objects.author_credentials()
+            return dict(tm.TMUserKeyset.objects.author_credentials())
         return LazyDict(_author_credentials)
     
     def configure_author_user_name(self, value):
