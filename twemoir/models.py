@@ -507,7 +507,7 @@ class TMUserKeysetManager(DelegateManager):
     
     def get_author_user_keyset(self):
         """ Hardcoded for now. """
-        return self.get(user_name='twitter-author-username')
+        return self.get(user_name=settings.TWEMOIR_USER)
     
     def author_credentials(self):
         return self.get_author_user_keyset().credentials
