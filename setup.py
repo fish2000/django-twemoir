@@ -28,10 +28,10 @@ import sys
 import os
 
 name = 'django-twemoir'
-version = '0.1.7'
+version = '0.1.8'
 packages = []
 description = 'Twitter data models.'
-keywords = 'python endjango-twemoirment variable simple template text'
+keywords = 'python django twitter data model sync'
 
 classifiers = [
     'Development Status :: 5 - Production/Stable']
