@@ -42,7 +42,10 @@ class JsonPairInputs(Widget):
         """
         if value is None or value is '': 
             value = '{}'
-        twotuple = simplejson.loads(force_unicode(value))
+        if type(value) == type({}):
+            twotuple = value.items()
+        else:
+            twotuple = simplejson.loads(force_unicode(value))
         
         ret = []
         if value and len(value) > 0:

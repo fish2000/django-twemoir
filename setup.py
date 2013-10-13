@@ -28,7 +28,7 @@ import sys
 import os
 
 name = 'django-twemoir'
-version = '0.1.8'
+version = '0.1.9'
 packages = []
 description = 'Twitter data models.'
 keywords = 'python django twitter data model sync'
