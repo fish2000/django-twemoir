@@ -30,7 +30,7 @@ import os
 name = 'django-twemoir'
 version = '0.2.0'
 packages = []
-description = 'Twitter data models.'
+description = 'Twitter data models'
 keywords = 'python django twitter data model sync'
 
 classifiers = [
