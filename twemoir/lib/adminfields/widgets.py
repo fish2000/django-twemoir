@@ -40,7 +40,7 @@ class JsonPairInputs(Widget):
         :param attrs: automatically passed in by django (unused in this function)
         :type attrs:  dict
         """
-        if value is None or value.strip() is '': 
+        if value is None or value is '': 
             value = '{}'
         twotuple = simplejson.loads(force_unicode(value))
         
